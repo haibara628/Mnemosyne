@@ -1,0 +1,41 @@
+# Mnemosyne + Cronos 生产部署 — Caddy 反代 + 自动 HTTPS
+# 用法: sudo cp deploy/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+
+# ========== 个人知识库 (CPKB / Mnemosyne) ==========
+mnemosyne.cdxypo.cn {
+    encode zstd gzip
+
+    # API 反代到后端 8000
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # 前端静态文件 (SPA fallback)
+    handle {
+        root * /home/ecs-user/workspace/Mnemosyne/frontend/dist
+        try_files {path} /index.html
+        file_server
+    }
+}
+
+# ========== Cronos (保留原有配置) ==========
+cronos.cdxypo.cn {
+    encode zstd gzip
+
+    # API 反代到后端 8001
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8001
+    }
+
+    # WebSocket 反代到后端 8001
+    handle /ws/* {
+        reverse_proxy 127.0.0.1:8001
+    }
+
+    # 前端静态文件 (SPA fallback)
+    handle {
+        root * /home/ecs-user/workspace/Cronos/frontend/dist
+        try_files {path} /index.html
+        file_server
+    }
+}

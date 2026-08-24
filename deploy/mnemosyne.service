@@ -1,0 +1,16 @@
+[Unit]
+Description=Mnemosyne (CPKB) FastAPI backend
+After=network.target
+
+[Service]
+Type=simple
+User=ecs-user
+Group=ecs-user
+WorkingDirectory=/home/ecs-user/workspace/Mnemosyne/backend
+ExecStart=/home/ecs-user/workspace/Mnemosyne/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
