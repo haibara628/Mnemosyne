@@ -120,3 +120,36 @@ export interface Stats {
   total_tags: number;
   total_links: number;
 }
+
+export interface Article {
+  id: string;
+  title: string;
+  url: string;
+  source: string;
+  category: string;
+  summary: string;
+  published_at: string;
+  score: number;
+  authority: number;
+  readership: number;
+  importance: number;
+  has_content: boolean;
+  created_at: string;
+}
+
+export interface ArticleDetail extends Article {
+  content: string | null;
+}
+
+export interface ArticleListResponse {
+  items: Article[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface NewsStats {
+  total: number;
+  by_category: Record<string, number>;
+  last_collected_at: string | null;
+}

@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     crawl_user_agent: str = "CPKB-Crawler/1.0"
     crawl_timeout_seconds: int = 30
 
+    # News collector
+    max_articles_per_run: int = 100
+    news_http_timeout: int = 20
+
 
 settings = Settings()
 

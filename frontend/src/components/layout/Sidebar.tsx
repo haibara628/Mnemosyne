@@ -90,6 +90,12 @@ export default function Sidebar() {
           📝 All Notes
         </Link>
         <Link
+          to="/news"
+          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${isActive('/news')}`}
+        >
+          📰 资讯
+        </Link>
+        <Link
           to="/search"
           className={`block px-3 py-2 rounded-lg text-sm transition-colors ${isActive('/search')}`}
         >

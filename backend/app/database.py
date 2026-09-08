@@ -1,12 +1,21 @@
 """Async SQLAlchemy engine, session factory, and table initialization."""
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy import text
+from sqlalchemy import text, event
 
 from app.config import settings
 
-engine = create_async_engine(settings.database_url, echo=False)
+engine = create_async_engine(settings.database_url, echo=False, connect_args={"timeout": 30})
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+@event.listens_for(engine.sync_engine, "connect")
+def _sqlite_pragmas(dbapi_connection, connection_record):
+    """Enable WAL + busy timeout so the hourly collector can write alongside the API."""
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=30000")
+    cursor.close()
 
 
 async def get_db() -> AsyncSession:
@@ -46,6 +55,7 @@ def _create_tables_sync(conn):
     from app.models.tag import Tag, NoteTag  # noqa: F401
     from app.models.attachment import Attachment  # noqa: F401
     from app.models.crawl_task import CrawlTask  # noqa: F401
+    from app.models.article import Article  # noqa: F401
     Base.metadata.create_all(conn)
 
 

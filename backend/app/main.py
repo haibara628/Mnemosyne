@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db
-from app.api import notes, search, links, tags, attachments, crawl, export
+from app.api import notes, search, links, tags, attachments, crawl, export, news
 
 
 @asynccontextmanager
@@ -46,6 +46,7 @@ app.include_router(tags.router)
 app.include_router(attachments.router)
 app.include_router(crawl.router)
 app.include_router(export.router)
+app.include_router(news.router)
 
 @app.get("/api/health")
 async def health_check():

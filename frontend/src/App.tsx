@@ -8,6 +8,7 @@ import NotesListPage from './pages/NotesListPage';
 import SearchPage from './pages/SearchPage';
 import GraphPage from './pages/GraphPage';
 import SettingsPage from './pages/SettingsPage';
+import NewsPage from './pages/NewsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/notes" element={<NotesListPage />} />
               <Route path="/notes/:id" element={<NotePage />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/news" element={<NewsPage />} />
               <Route path="/graph" element={<GraphPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>

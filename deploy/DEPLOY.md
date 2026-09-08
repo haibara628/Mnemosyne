@@ -127,3 +127,24 @@ cd /home/ecs-user/workspace/Mnemosyne/frontend && npm run build
   之后管理命令：`sudo systemctl restart|stop|status mnemosyne`，日志 `sudo journalctl -u mnemosyne -f`。
 
 - **crontab 健康检查**：仿照 Cronos 的 `scripts/health_check.sh`，每 5 分钟探测 `/api/health`，失败自动重启（systemd 已覆盖此场景，可省略）。
+
+## 八、资讯自动采集（每小时）
+
+采集器从 Hacker News（近 24h 热门，真实 points 作「阅读量」）+ 精选 RSS（财经/科技/AI）抓取，按「权威性 · 热度 · 重要性 × 新鲜度」评分排序，每次最多保存 100 篇。源列表见 `backend/app/news_sources.py`。
+
+```bash
+sudo cp /home/ecs-user/workspace/Mnemosyne/deploy/mnemosyne-news.service /etc/systemd/system/mnemosyne-news.service
+sudo cp /home/ecs-user/workspace/Mnemosyne/deploy/mnemosyne-news.timer /etc/systemd/system/mnemosyne-news.timer
+sudo systemctl daemon-reload
+sudo systemctl enable --now mnemosyne-news.timer
+```
+
+手动触发一次 / 查看日志：
+
+```bash
+cd /home/ecs-user/workspace/Mnemosyne/backend
+.venv/bin/python -m app.news_collector
+sudo systemctl status mnemosyne-news.timer --no-pager
+```
+
+> 国内 ECS 对 Reuters / FT / The Economist 等外站常连接超时，属网络限制；如需更全的财经源可换用可访问的 RSS 或接入新闻 API。

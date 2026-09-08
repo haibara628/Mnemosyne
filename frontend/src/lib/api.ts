@@ -15,6 +15,9 @@ import type {
   Stats,
   BacklinkInfo,
   OutlinkInfo,
+  ArticleListResponse,
+  ArticleDetail,
+  NewsStats,
 } from './types';
 
 const client = axios.create({
@@ -138,4 +141,30 @@ export async function uploadFile(file: File, noteId?: string) {
 
 export function getExportUrl(): string {
   return '/api/v1/export';
+}
+
+// ── News ──
+
+export async function fetchNews(params: {
+  category?: string;
+  page?: number;
+  page_size?: number;
+} = {}): Promise<ArticleListResponse> {
+  const { data } = await client.get('/news', { params });
+  return data;
+}
+
+export async function fetchNewsStats(): Promise<NewsStats> {
+  const { data } = await client.get('/news/stats');
+  return data;
+}
+
+export async function fetchArticle(id: string): Promise<ArticleDetail> {
+  const { data } = await client.get(`/news/${id}`);
+  return data;
+}
+
+export async function fetchArticleContent(id: string): Promise<ArticleDetail> {
+  const { data } = await client.post(`/news/${id}/fetch`);
+  return data;
 }
