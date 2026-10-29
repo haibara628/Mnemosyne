@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import init_db
 from app.api import notes, search, links, tags, attachments, crawl, export, news
-from app.api import assets, models, prompts, tasks, lineage
+from app.api import assets, models, prompts, tasks, lineage, settings as settings_api
 
 
 @asynccontextmanager
@@ -53,6 +53,7 @@ app.include_router(models.router)
 app.include_router(prompts.router)
 app.include_router(tasks.router)
 app.include_router(lineage.router)
+app.include_router(settings_api.router)
 
 @app.get("/api/health")
 async def health_check():

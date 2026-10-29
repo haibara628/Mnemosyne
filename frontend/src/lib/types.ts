@@ -153,3 +153,16 @@ export interface NewsStats {
   by_category: Record<string, number>;
   last_collected_at: string | null;
 }
+
+export interface SettingsInfo {
+  data_dir: string;
+  database_url: string;
+  upload_dir: string;
+  version: string;
+}
+
+export interface DataDirUpdateResult {
+  data_dir: string;
+  restart_required: boolean;
+  message: string;
+}

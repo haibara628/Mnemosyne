@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import List
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,11 +14,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Database
-    database_url: str = "sqlite+aiosqlite:///./data/cpkb.db"
+    # Data directory — SQLite DB + uploads live here.
+    # Set via MNEMOSYNE_DATA_DIR env var (or backend/.env).
+    data_dir: str = Field(default="./data", validation_alias="MNEMOSYNE_DATA_DIR")
 
     # File storage
-    upload_dir: str = "./data/uploads"
     max_upload_size_mb: int = 50
 
     # Server
@@ -37,9 +38,20 @@ class Settings(BaseSettings):
     max_articles_per_run: int = 100
     news_http_timeout: int = 20
 
+    @property
+    def database_url(self) -> str:
+        """SQLite URL derived from data_dir (absolute paths yield 4 slashes)."""
+        db_path = Path(self.data_dir) / "cpkb.db"
+        return f"sqlite+aiosqlite:///{db_path}"
+
+    @property
+    def upload_dir(self) -> str:
+        """Upload directory derived from data_dir."""
+        return str(Path(self.data_dir) / "uploads")
+
 
 settings = Settings()
 
 # Ensure data directories exist
+Path(settings.data_dir).mkdir(parents=True, exist_ok=True)
 Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
-Path("./data").mkdir(parents=True, exist_ok=True)

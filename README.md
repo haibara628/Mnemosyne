@@ -74,6 +74,22 @@ cd backend
 pytest -v
 ```
 
+## 数据目录外置(可选)
+
+默认数据(SQLite `cpkb.db` + 附件 `uploads/`)保存在 `backend/data/`。可把它外置到 NAS 等位置:
+
+```bash
+# 1. 迁移现有数据(首次运行可跳过)
+mv backend/data /mnt/nas/Mnemosyne/data
+
+# 2. 设置环境变量(或写入 backend/.env:MNEMOSYNE_DATA_DIR=/mnt/nas/Mnemosyne/data)
+export MNEMOSYNE_DATA_DIR=/mnt/nas/Mnemosyne/data
+
+# 3. 重启后端生效
+```
+
+也可在设置页的「数据存储位置」中直接指定该目录;保存后同样需重启后端生效,且不会自动移动数据。
+
 ## 项目结构
 
 ```

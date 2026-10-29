@@ -18,6 +18,8 @@ import type {
   ArticleListResponse,
   ArticleDetail,
   NewsStats,
+  SettingsInfo,
+  DataDirUpdateResult,
 } from './types';
 
 const client = axios.create({
@@ -166,5 +168,17 @@ export async function fetchArticle(id: string): Promise<ArticleDetail> {
 
 export async function fetchArticleContent(id: string): Promise<ArticleDetail> {
   const { data } = await client.post(`/news/${id}/fetch`);
+  return data;
+}
+
+// ── Settings ──
+
+export async function fetchSettings(): Promise<SettingsInfo> {
+  const { data } = await client.get('/settings');
+  return data;
+}
+
+export async function updateDataDir(dataDir: string): Promise<DataDirUpdateResult> {
+  const { data } = await client.post('/settings/data-dir', { data_dir: dataDir });
   return data;
 }
