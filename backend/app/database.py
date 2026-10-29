@@ -56,6 +56,11 @@ def _create_tables_sync(conn):
     from app.models.attachment import Attachment  # noqa: F401
     from app.models.crawl_task import CrawlTask  # noqa: F401
     from app.models.article import Article  # noqa: F401
+    from app.models.asset import Asset  # noqa: F401
+    from app.models.model import Model  # noqa: F401
+    from app.models.prompt import Prompt  # noqa: F401
+    from app.models.task import Task  # noqa: F401
+    from app.models.lineage import Lineage  # noqa: F401
     Base.metadata.create_all(conn)
 
 

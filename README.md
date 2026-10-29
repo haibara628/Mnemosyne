@@ -17,10 +17,18 @@
 
 | 层 | 技术 |
 |-------|-----------|
-| 前端 | React 19 + TypeScript + Vite + TailwindCSS v4 + TipTap |
+| 前端 | React 19 + TypeScript + Vite + TailwindCSS v4 + shadcn/ui + BlockSuite(编辑器) |
 | 后端 | Python FastAPI + SQLAlchemy 2.0 (异步) |
 | 数据库 | SQLite + FTS5 |
 | 部署 | Docker Compose |
+
+## P0 工作台扩展
+
+- **多模块外壳**:侧边栏导航 知识库 / 素材库 / 血缘 / 日程 / AI 面板(素材库/血缘/日程/AI 为 P1 占位页)。
+- **BlockSuite 编辑器**:替代 TipTap,知识库笔记以 Markdown 存储(与 FTS、`[[wiki-link]]` 兼容)。
+- **新增数据表**:`assets`(素材)/ `models`(模型)/ `prompts`(提示词)/ `tasks`(任务)+ `lineage`(血缘)。
+- **新增 API**:`/api/v1/assets`、`/models`、`/prompts`、`/tasks`、`/lineage`(含上游追溯 `/lineage/trace`)。
+- BlockSuite 独立引库验证结论见 [docs/blocksuite-spike.md](docs/blocksuite-spike.md)。
 
 ## 快速开始
 
@@ -43,11 +51,14 @@ docker-compose up -d --build
 
 ### 3. 开发模式
 
+> 后端依赖 pin 与 Python 3.14 不兼容,请用 uv 安装 Python 3.12 建 venv(Docker 用 python:3.12-slim,无此问题)。
+
 ```bash
 # 后端（终端 1）
 cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+uv venv --python 3.12 .venv
+uv pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+.venv/bin/python -m uvicorn app.main:app --reload
 
 # 前端（终端 2）
 cd frontend

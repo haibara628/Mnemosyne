@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import TipTapEditor from '../components/editor/TipTapEditor';
+import BlockSuiteEditor from '../components/editor/BlockSuiteEditor';
 import BacklinksPanel from '../components/layout/BacklinksPanel';
 import { useNote, useUpdateNote, useDeleteNote } from '../hooks/useNotes';
 import { fetchTags } from '../lib/api';
 import { useQuery } from '@tanstack/react-query';
-// NoteDetail type used implicitly through useNote hook
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function NotePage() {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +21,7 @@ export default function NotePage() {
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Sync local state when note loads
+  // 同步本地状态(笔记加载后)
   useEffect(() => {
     if (note) {
       setTitle(note.title);
@@ -44,7 +45,7 @@ export default function NotePage() {
     }
   }, [id, note, title, content, updateNote]);
 
-  // Auto-save on Ctrl+S
+  // Ctrl+S 手动保存
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -56,7 +57,7 @@ export default function NotePage() {
     return () => window.removeEventListener('keydown', handler);
   }, [save]);
 
-  // Debounced auto-save
+  // 防抖自动保存
   useEffect(() => {
     if (!note) return;
     const timer = setTimeout(() => {
@@ -77,7 +78,7 @@ export default function NotePage() {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
@@ -87,10 +88,10 @@ export default function NotePage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="text-4xl mb-2">🔍</p>
-          <p className="text-gray-500">Note not found</p>
+          <p className="text-muted-foreground">Note not found</p>
           <button
             onClick={() => navigate('/notes')}
-            className="mt-2 text-sm text-emerald-600 hover:underline"
+            className="mt-2 text-sm text-primary hover:underline"
           >
             ← Back to notes
           </button>
@@ -101,13 +102,13 @@ export default function NotePage() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Main content area */}
+      {/* 主内容区 */}
       <div className="flex-1 overflow-y-auto p-6">
-        {/* Header */}
+        {/* 标题栏 */}
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => navigate('/notes')}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             title="Back"
           >
             ←
@@ -116,44 +117,39 @@ export default function NotePage() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="flex-1 text-xl font-bold text-gray-800 outline-none border-none bg-transparent"
+            className="flex-1 text-xl font-bold text-foreground outline-none border-none bg-transparent"
             placeholder="Note title..."
           />
-          <span className={`text-xs transition-opacity ${isSaving ? 'opacity-100 text-emerald-600' : 'opacity-0'}`}>
+          <span className={`text-xs transition-opacity ${isSaving ? 'opacity-100 text-primary' : 'opacity-0'}`}>
             Saving...
           </span>
-          <button
-            onClick={save}
-            className="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            Save
-          </button>
-          <button
-            onClick={handleDelete}
-            className="px-3 py-1.5 text-sm border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
-          >
-            Delete
-          </button>
+          <Button size="sm" onClick={save}>Save</Button>
+          <Button size="sm" variant="destructive" onClick={handleDelete}>Delete</Button>
         </div>
 
-        {/* Tags */}
+        {/* 标签 */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {note.tags.map((tag) => (
-            <span key={tag.id} className="px-2 py-0.5 text-xs rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
-              # {tag.name}
-            </span>
+            <Badge key={tag.id} variant="secondary"># {tag.name}</Badge>
           ))}
         </div>
 
-        {/* Editor */}
-        <TipTapEditor
-          content={content}
-          onChange={setContent}
-          placeholder="Start writing... Use [[Note Title]] to link to another note."
-        />
+        {/* BlockSuite 编辑器(内容为 Markdown) */}
+        <div className="border rounded-lg overflow-hidden bg-background">
+          <BlockSuiteEditor
+            docId={note.id}
+            initialContent={note.content}
+            initialTitle={note.title}
+            onChange={setContent}
+            className="min-h-[60vh]"
+          />
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          使用 [[笔记标题]] 创建双向链接。
+        </p>
       </div>
 
-      {/* Side panel: backlinks */}
+      {/* 侧栏:反向链接 */}
       {id && <BacklinksPanel noteId={id} />}
     </div>
   );

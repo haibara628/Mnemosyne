@@ -9,6 +9,10 @@ import SearchPage from './pages/SearchPage';
 import GraphPage from './pages/GraphPage';
 import SettingsPage from './pages/SettingsPage';
 import NewsPage from './pages/NewsPage';
+import AssetsPage from './pages/AssetsPage';
+import LineagePage from './pages/LineagePage';
+import TasksPage from './pages/TasksPage';
+import AIPanelPage from './pages/AIPanelPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,19 +27,23 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="flex h-screen bg-white">
+        <div className="flex h-screen bg-background text-foreground">
           <Sidebar />
           <div className="flex-1 flex flex-col min-w-0">
-            {/* Top bar with search */}
-            <header className="flex items-center justify-end px-6 py-2 border-b border-gray-100 bg-white">
+            {/* 顶部搜索栏 */}
+            <header className="flex items-center justify-end px-6 py-2 border-b bg-background">
               <SearchBar />
             </header>
 
-            {/* Main content */}
+            {/* 主内容 */}
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/notes" element={<NotesListPage />} />
               <Route path="/notes/:id" element={<NotePage />} />
+              <Route path="/assets" element={<AssetsPage />} />
+              <Route path="/lineage" element={<LineagePage />} />
+              <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/ai" element={<AIPanelPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/graph" element={<GraphPage />} />
