@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-5-20251001"
 
+    # Chat — local Ollama + cloud OpenAI-compatible endpoints
+    ollama_base_url: str = "http://localhost:11434/v1"
+    openai_base_url: str = "https://api.deepseek.com/v1"
+    openai_api_key: str = Field(default="", validation_alias="DEEPSEEK_API_KEY")
+    default_chat_model: str = "qwen2.5:14b"
+
     # Crawler
     crawl_user_agent: str = "CPKB-Crawler/1.0"
     crawl_timeout_seconds: int = 30

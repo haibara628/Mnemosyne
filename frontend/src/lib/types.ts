@@ -166,3 +166,23 @@ export interface DataDirUpdateResult {
   restart_required: boolean;
   message: string;
 }
+
+export interface ChatModel {
+  id: string;
+  provider: string;
+  name: string;
+}
+
+export interface ChatModelsResponse {
+  models: ChatModel[];
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+export interface ChatResponse {
+  content: string;
+  model: string;
+}

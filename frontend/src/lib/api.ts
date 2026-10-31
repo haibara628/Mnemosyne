@@ -20,6 +20,7 @@ import type {
   NewsStats,
   SettingsInfo,
   DataDirUpdateResult,
+  ChatModelsResponse,
 } from './types';
 
 const client = axios.create({
@@ -180,5 +181,12 @@ export async function fetchSettings(): Promise<SettingsInfo> {
 
 export async function updateDataDir(dataDir: string): Promise<DataDirUpdateResult> {
   const { data } = await client.post('/settings/data-dir', { data_dir: dataDir });
+  return data;
+}
+
+// ── AI Chat ──
+
+export async function fetchChatModels(): Promise<ChatModelsResponse> {
+  const { data } = await client.get('/chat/models');
   return data;
 }
