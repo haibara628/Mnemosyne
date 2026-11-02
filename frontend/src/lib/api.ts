@@ -33,6 +33,11 @@ import type {
   PromptItem,
   PromptCreate,
   PromptUpdate,
+  TaskListResponse,
+  LineageListResponse,
+  LineageItem,
+  LineageCreate,
+  LineageTrace,
 } from './types';
 
 const client = axios.create({
@@ -275,4 +280,45 @@ export async function updatePrompt(id: string, body: PromptUpdate): Promise<Prom
 
 export async function deletePrompt(id: string): Promise<void> {
   await client.delete(`/prompts/${id}`);
+}
+
+// ── Tasks (任务) ──
+
+export async function fetchTasks(params: {
+  page?: number;
+  page_size?: number;
+  status?: string;
+  project?: string;
+} = {}): Promise<TaskListResponse> {
+  const { data } = await client.get('/tasks', { params });
+  return data;
+}
+
+// ── Lineage (血缘) ──
+
+export async function fetchLineage(params: {
+  page?: number;
+  page_size?: number;
+  source_type?: string;
+  source_id?: string;
+  target_type?: string;
+  target_id?: string;
+  relation?: string;
+} = {}): Promise<LineageListResponse> {
+  const { data } = await client.get('/lineage', { params });
+  return data;
+}
+
+export async function createLineage(body: LineageCreate): Promise<LineageItem> {
+  const { data } = await client.post('/lineage', body);
+  return data;
+}
+
+export async function deleteLineage(id: string): Promise<void> {
+  await client.delete(`/lineage/${id}`);
+}
+
+export async function traceLineage(type: string, id: string): Promise<LineageTrace> {
+  const { data } = await client.get('/lineage/trace', { params: { type, id } });
+  return data;
 }

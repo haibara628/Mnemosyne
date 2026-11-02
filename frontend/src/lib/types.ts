@@ -276,3 +276,70 @@ export interface PromptUpdate {
   text?: string | null;
   tags?: string | null;
 }
+
+// ── Tasks (任务) ──
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  due_date: string | null;
+  project: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TaskListResponse {
+  items: TaskItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+// ── Lineage (血缘) ──
+
+export interface LineageItem {
+  id: string;
+  source_type: string;
+  source_id: string;
+  target_type: string;
+  target_id: string;
+  relation: string;
+  context: string | null;
+  created_at: string;
+}
+
+export interface LineageListResponse {
+  items: LineageItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface LineageCreate {
+  source_type: string;
+  source_id: string;
+  target_type: string;
+  target_id: string;
+  relation: string;
+  context?: string | null;
+}
+
+export interface LineageTraceNode {
+  key: string;
+  type: string;
+  id: string;
+  label: string | null;
+}
+
+export interface LineageTraceEdge {
+  source: string;
+  target: string;
+  relation: string;
+}
+
+export interface LineageTrace {
+  nodes: LineageTraceNode[];
+  edges: LineageTraceEdge[];
+}
