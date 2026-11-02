@@ -37,6 +37,15 @@ FTS_TRIGGERS = [
 ]
 
 
+@pytest.fixture(autouse=True)
+def isolate_notes_dir(tmp_path, monkeypatch):
+    """Point note markdown storage at a per-test temp dir, not the real data dir."""
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "notes_dir", str(tmp_path / "notes"))
+    yield
+
+
 @pytest_asyncio.fixture
 async def async_engine():
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)

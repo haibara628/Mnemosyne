@@ -17,7 +17,8 @@ class Note(Base):
 
     id: Mapped[str] = mapped_column(String(26), primary_key=True, default=generate_ulid)
     title: Mapped[str] = mapped_column(String(500), nullable=False, default="Untitled")
-    content: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Markdown body lives on disk at {notes_dir}/{id}.md; this column keeps only
+    # the plain-text form for FTS5 indexing.
     content_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
     is_pinned: Mapped[bool] = mapped_column(Integer, default=0)
     created_at: Mapped[str] = mapped_column(

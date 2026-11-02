@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.note import Note
 from app.services.note_service import get_stats
+from app.utils.note_storage import read_note_markdown
 
 router = APIRouter(prefix="/api/v1", tags=["data"])
 
@@ -45,7 +46,8 @@ async def export_notes(db: AsyncSession = Depends(get_db)):
                 filename = f"{base}_{i}.md"
             seen_names.add(filename)
 
-            zf.writestr(filename, note.content)
+            content = await read_note_markdown(note.id)
+            zf.writestr(filename, content)
 
     buf.seek(0)
     return StreamingResponse(

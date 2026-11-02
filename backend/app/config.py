@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import List
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,8 +18,16 @@ class Settings(BaseSettings):
     # Set via MNEMOSYNE_DATA_DIR env var (or backend/.env).
     data_dir: str = Field(default="./data", validation_alias="MNEMOSYNE_DATA_DIR")
 
+    # Note markdown bodies live here (SQLite only keeps metadata + content_text for FTS).
+    # Defaults to {data_dir}/notes; override with MNEMOSYNE_NOTES_DIR (point it at the NAS).
+    notes_dir: str = Field(default="", validation_alias="MNEMOSYNE_NOTES_DIR")
+
     # File storage
     max_upload_size_mb: int = 50
+
+    # Uploads (attachments) — should also point at the NAS in production; set
+    # MNEMOSYNE_UPLOAD_DIR. Defaults to {data_dir}/uploads.
+    upload_dir: str = Field(default="", validation_alias="MNEMOSYNE_UPLOAD_DIR")
 
     # Server
     host: str = "0.0.0.0"
@@ -44,20 +52,25 @@ class Settings(BaseSettings):
     max_articles_per_run: int = 100
     news_http_timeout: int = 20
 
+    @model_validator(mode="after")
+    def _resolve_storage_dirs(self) -> "Settings":
+        """Derive notes_dir/upload_dir from data_dir when their env vars are unset."""
+        if not self.notes_dir:
+            self.notes_dir = str(Path(self.data_dir) / "notes")
+        if not self.upload_dir:
+            self.upload_dir = str(Path(self.data_dir) / "uploads")
+        return self
+
     @property
     def database_url(self) -> str:
         """SQLite URL derived from data_dir (absolute paths yield 4 slashes)."""
         db_path = Path(self.data_dir) / "cpkb.db"
         return f"sqlite+aiosqlite:///{db_path}"
 
-    @property
-    def upload_dir(self) -> str:
-        """Upload directory derived from data_dir."""
-        return str(Path(self.data_dir) / "uploads")
-
 
 settings = Settings()
 
 # Ensure data directories exist
 Path(settings.data_dir).mkdir(parents=True, exist_ok=True)
+Path(settings.notes_dir).mkdir(parents=True, exist_ok=True)
 Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)

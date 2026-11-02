@@ -16,6 +16,7 @@ from app.schemas.note import (
     OutlinkInfo,
 )
 from app.services import note_service
+from app.utils.note_storage import read_note_markdown
 
 router = APIRouter(prefix="/api/v1/notes", tags=["notes"])
 
@@ -98,10 +99,11 @@ async def get_outlinks(note_id: str, db: AsyncSession = Depends(get_db)):
 async def _build_detail(db: AsyncSession, note) -> NoteDetail:
     backlinks = await note_service.get_backlinks(db, note.id)
     outlinks = await note_service.get_outlinks(db, note.id)
+    content = await read_note_markdown(note.id)
     return NoteDetail(
         id=note.id,
         title=note.title,
-        content=note.content,
+        content=content,
         is_pinned=note.is_pinned,
         tags=[{"id": t.id, "name": t.name} for t in note.tags],
         backlinks=[BacklinkInfo(**bl) for bl in backlinks],

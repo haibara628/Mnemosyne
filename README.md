@@ -90,6 +90,33 @@ export MNEMOSYNE_DATA_DIR=/mnt/nas/Mnemosyne/data
 
 也可在设置页的「数据存储位置」中直接指定该目录;保存后同样需重启后端生效,且不会自动移动数据。
 
+## 笔记正文迁到 NAS
+
+SQLite 放在 SMB/NAS 上会报 "database is locked",因此本地工作台只把 SQLite 留在本地磁盘,笔记正文 markdown 改存 NAS 文件:
+
+- **SQLite(本地磁盘)**:笔记 meta(title/id/时间/置顶/标签/双链)+ `content_text`(纯文本,全文索引源)+ 素材/任务/血缘元数据。
+- **NAS(文件存储)**:笔记正文 markdown(`{notes_dir}/{note_id}.md`)+ 附件(`uploads/`)。
+
+配置:
+
+```bash
+# 笔记正文目录,默认 {MNEMOSYNE_DATA_DIR}/notes
+export MNEMOSYNE_NOTES_DIR=/mnt/nas/Mnemosyne/notes
+# 附件目录(通过 data_dir 或 upload_dir 指向 NAS)
+export MNEMOSYNE_UPLOAD_DIR=/mnt/nas/Mnemosyne/uploads
+```
+
+### 迁移现有笔记
+
+> 必须先跑一次迁移,把旧库里 `notes.content` 列搬到 NAS 文件,否则新代码会因该列不存在而无法写入。
+
+```bash
+cd backend
+.venv/bin/python scripts/migrate_content_to_nas.py
+```
+
+脚本会遍历现有笔记,把每条 `content` 写到 `{notes_dir}/{id}.md`,然后 `ALTER TABLE notes DROP COLUMN content`(SQLite 3.35+)。脚本幂等:已迁移的笔记自动跳过,可重复执行。
+
 ## 项目结构
 
 ```

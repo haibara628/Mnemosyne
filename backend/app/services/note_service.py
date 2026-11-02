@@ -13,6 +13,11 @@ from app.models.note import Note
 from app.models.tag import Tag, NoteTag, note_tags_table
 from app.models.link import Link
 from app.utils.markdown import extract_unique_link_titles, strip_markdown
+from app.utils.note_storage import (
+    read_note_markdown,
+    write_note_markdown,
+    delete_note_markdown,
+)
 
 
 async def list_notes(
@@ -67,9 +72,13 @@ async def get_note_by_title(db: AsyncSession, title: str) -> Note | None:
 
 
 async def create_note(db: AsyncSession, title: str, content: str, tag_ids: List[str] = []) -> Note:
-    """Create a new note, sync tags and links."""
+    """Create a new note, sync tags and links.
+
+    The markdown body is written to {notes_dir}/{id}.md; only content_text is
+    kept in SQLite for FTS.
+    """
     content_text = strip_markdown(content)
-    note = Note(title=title, content=content, content_text=content_text)
+    note = Note(title=title, content_text=content_text)
 
     # Attach tags
     if tag_ids:
@@ -80,8 +89,9 @@ async def create_note(db: AsyncSession, title: str, content: str, tag_ids: List[
     db.add(note)
     await db.flush()  # Get the note ID
 
-    # Sync wiki links
-    await sync_links_for_note(db, note)
+    # Persist the markdown body to disk, then sync wiki links from it
+    await write_note_markdown(note.id, content)
+    await sync_links_for_note(db, note, content)
 
     await db.commit()
     await db.refresh(note)
@@ -104,8 +114,8 @@ async def update_note(
     if title is not None:
         note.title = title
     if content is not None:
-        note.content = content
         note.content_text = strip_markdown(content)
+        await write_note_markdown(note.id, content)
     if is_pinned is not None:
         note.is_pinned = is_pinned
 
@@ -117,8 +127,9 @@ async def update_note(
         tags = (await db.execute(tag_q)).scalars().all()
         note.tags = list(tags)
 
-    # Re-sync wiki links
-    await sync_links_for_note(db, note)
+    # Re-sync wiki links — read current body back from disk if content unchanged
+    current_content = content if content is not None else await read_note_markdown(note.id)
+    await sync_links_for_note(db, note, current_content)
 
     await db.commit()
     await db.refresh(note)
@@ -126,12 +137,13 @@ async def update_note(
 
 
 async def delete_note(db: AsyncSession, note_id: str) -> bool:
-    """Delete a note. CASCADE handles links and note_tags."""
+    """Delete a note. CASCADE handles links and note_tags; also remove the .md file."""
     note = await get_note(db, note_id)
     if note is None:
         return False
     await db.delete(note)
     await db.commit()
+    await delete_note_markdown(note_id)
     return True
 
 
@@ -165,14 +177,14 @@ async def get_outlinks(db: AsyncSession, note_id: str) -> List[Dict]:
     ]
 
 
-async def sync_links_for_note(db: AsyncSession, note: Note) -> None:
+async def sync_links_for_note(db: AsyncSession, note: Note, content: str) -> None:
     """Parse [[wiki-links]] from note content and sync the links table."""
     # Remove existing outgoing links for this note
     await db.execute(
         delete(Link).where(Link.source_note_id == note.id)
     )
 
-    titles = extract_unique_link_titles(note.content)
+    titles = extract_unique_link_titles(content)
     for target_title in titles:
         target = await get_note_by_title(db, target_title)
         if target is None or target.id == note.id:
