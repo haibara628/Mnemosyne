@@ -297,6 +297,22 @@ export interface TaskListResponse {
   page_size: number;
 }
 
+export interface TaskCreate {
+  title: string;
+  status?: string;
+  priority?: string;
+  due_date?: string | null;
+  project?: string | null;
+}
+
+export interface TaskUpdate {
+  title?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  due_date?: string | null;
+  project?: string | null;
+}
+
 // ── Lineage (血缘) ──
 
 export interface LineageItem {

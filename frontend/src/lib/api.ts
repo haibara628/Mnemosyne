@@ -34,6 +34,9 @@ import type {
   PromptCreate,
   PromptUpdate,
   TaskListResponse,
+  TaskItem,
+  TaskCreate,
+  TaskUpdate,
   LineageListResponse,
   LineageItem,
   LineageCreate,
@@ -292,6 +295,20 @@ export async function fetchTasks(params: {
 } = {}): Promise<TaskListResponse> {
   const { data } = await client.get('/tasks', { params });
   return data;
+}
+
+export async function createTask(body: TaskCreate): Promise<TaskItem> {
+  const { data } = await client.post('/tasks', body);
+  return data;
+}
+
+export async function updateTask(id: string, body: TaskUpdate): Promise<TaskItem> {
+  const { data } = await client.put(`/tasks/${id}`, body);
+  return data;
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await client.delete(`/tasks/${id}`);
 }
 
 // ── Lineage (血缘) ──
