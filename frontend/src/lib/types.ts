@@ -186,3 +186,93 @@ export interface ChatResponse {
   content: string;
   model: string;
 }
+
+// ── Assets (素材) ──
+
+export interface AssetItem {
+  id: string;
+  type: string; // image | video | text | prompt | model
+  title: string;
+  path: string;
+  eagle_id: string | null;
+  created_at: string;
+}
+
+export interface AssetListResponse {
+  items: AssetItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface AssetCreate {
+  type?: string;
+  title?: string;
+  path?: string;
+  eagle_id?: string | null;
+}
+
+export interface AssetUpdate {
+  type?: string | null;
+  title?: string | null;
+  path?: string | null;
+  eagle_id?: string | null;
+}
+
+// ── Models (模型) ──
+
+export interface ModelItem {
+  id: string;
+  name: string;
+  kind: string; // checkpoint | lora | vae | embedding | ...
+  path: string;
+  created_at: string;
+}
+
+export interface ModelListResponse {
+  items: ModelItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface ModelCreate {
+  name?: string;
+  kind?: string;
+  path?: string;
+}
+
+export interface ModelUpdate {
+  name?: string | null;
+  kind?: string | null;
+  path?: string | null;
+}
+
+// ── Prompts (提示词) ──
+
+export interface PromptItem {
+  id: string;
+  title: string;
+  text: string;
+  tags: string; // 逗号分隔标签
+  created_at: string;
+}
+
+export interface PromptListResponse {
+  items: PromptItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface PromptCreate {
+  title?: string;
+  text?: string;
+  tags?: string;
+}
+
+export interface PromptUpdate {
+  title?: string | null;
+  text?: string | null;
+  tags?: string | null;
+}

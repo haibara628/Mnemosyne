@@ -21,6 +21,18 @@ import type {
   SettingsInfo,
   DataDirUpdateResult,
   ChatModelsResponse,
+  AssetListResponse,
+  AssetItem,
+  AssetCreate,
+  AssetUpdate,
+  ModelListResponse,
+  ModelItem,
+  ModelCreate,
+  ModelUpdate,
+  PromptListResponse,
+  PromptItem,
+  PromptCreate,
+  PromptUpdate,
 } from './types';
 
 const client = axios.create({
@@ -189,4 +201,78 @@ export async function updateDataDir(dataDir: string): Promise<DataDirUpdateResul
 export async function fetchChatModels(): Promise<ChatModelsResponse> {
   const { data } = await client.get('/chat/models');
   return data;
+}
+
+// ── Assets (素材) ──
+
+export async function fetchAssets(params: {
+  page?: number;
+  page_size?: number;
+  type?: string;
+} = {}): Promise<AssetListResponse> {
+  const { data } = await client.get('/assets', { params });
+  return data;
+}
+
+export async function createAsset(body: AssetCreate): Promise<AssetItem> {
+  const { data } = await client.post('/assets', body);
+  return data;
+}
+
+export async function updateAsset(id: string, body: AssetUpdate): Promise<AssetItem> {
+  const { data } = await client.put(`/assets/${id}`, body);
+  return data;
+}
+
+export async function deleteAsset(id: string): Promise<void> {
+  await client.delete(`/assets/${id}`);
+}
+
+// ── Models (模型) ──
+
+export async function fetchModels(params: {
+  page?: number;
+  page_size?: number;
+  kind?: string;
+} = {}): Promise<ModelListResponse> {
+  const { data } = await client.get('/models', { params });
+  return data;
+}
+
+export async function createModel(body: ModelCreate): Promise<ModelItem> {
+  const { data } = await client.post('/models', body);
+  return data;
+}
+
+export async function updateModel(id: string, body: ModelUpdate): Promise<ModelItem> {
+  const { data } = await client.put(`/models/${id}`, body);
+  return data;
+}
+
+export async function deleteModel(id: string): Promise<void> {
+  await client.delete(`/models/${id}`);
+}
+
+// ── Prompts (提示词) ──
+
+export async function fetchPrompts(params: {
+  page?: number;
+  page_size?: number;
+} = {}): Promise<PromptListResponse> {
+  const { data } = await client.get('/prompts', { params });
+  return data;
+}
+
+export async function createPrompt(body: PromptCreate): Promise<PromptItem> {
+  const { data } = await client.post('/prompts', body);
+  return data;
+}
+
+export async function updatePrompt(id: string, body: PromptUpdate): Promise<PromptItem> {
+  const { data } = await client.put(`/prompts/${id}`, body);
+  return data;
+}
+
+export async function deletePrompt(id: string): Promise<void> {
+  await client.delete(`/prompts/${id}`);
 }
