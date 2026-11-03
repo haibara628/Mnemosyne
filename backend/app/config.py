@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     # News collector
     max_articles_per_run: int = 100
     news_http_timeout: int = 20
+    # RSSHub 地址(把雪球/财新/华尔街见闻等无公开 RSS 的财经站转成 RSS)。
+    # 默认本机 127.0.0.1:1200(ECS 上跑着 RSSHub 容器);本地无 RSSHub 时设为空字符串可禁用财经源。
+    rsshub_base_url: str = Field(default="http://127.0.0.1:1200", validation_alias="RSSHUB_BASE_URL")
 
     @model_validator(mode="after")
     def _resolve_storage_dirs(self) -> "Settings":

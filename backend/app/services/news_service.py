@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.article import Article
-from app.news_sources import RSS_SOURCES, HN_AUTHORITY, KEYWORD_WEIGHTS, IMPORTANT_KEYWORDS
+from app.news_sources import RSS_SOURCES, get_rsshub_sources, HN_AUTHORITY, KEYWORD_WEIGHTS, IMPORTANT_KEYWORDS
 from app.services.crawl_service import _extract_content
 
 logger = logging.getLogger("news_collector")
@@ -189,7 +189,7 @@ async def collect_news(db: AsyncSession) -> dict:
     async with httpx.AsyncClient(timeout=settings.news_http_timeout) as client:
         hn = await _fetch_hn(client)
         rss: List[dict] = []
-        for src in RSS_SOURCES:
+        for src in RSS_SOURCES + get_rsshub_sources(settings.rsshub_base_url):
             rss.extend(await _fetch_rss(client, src))
 
     all_candidates = hn + rss

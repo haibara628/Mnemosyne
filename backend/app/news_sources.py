@@ -32,6 +32,36 @@ RSS_SOURCES = [
     {"name": "量子位", "url": "https://www.qbitai.com/feed", "category": "ai", "authority": 0.60},
 ]
 
+# 中文财经源(雪球/财新/华尔街见闻/财联社/第一财经无公开 RSS),经 RSSHub 转换。
+# 只存路由路径;完整 URL = rsshub_base_url + route(见 get_rsshub_sources)。
+# 雪球/36氪 反爬返回 503,需 RSSHub 配 headless 浏览器,暂未加入。
+RSSHUB_FINANCE_SOURCES = [
+    {"name": "财新", "route": "/caixin/latest", "category": "finance", "authority": 0.85},
+    {"name": "华尔街见闻·全球", "route": "/wallstreetcn/news/global", "category": "finance", "authority": 0.70},
+    {"name": "华尔街见闻·中国", "route": "/wallstreetcn/news/china", "category": "finance", "authority": 0.70},
+    {"name": "华尔街见闻·快讯", "route": "/wallstreetcn/live/global", "category": "finance", "authority": 0.65},
+    {"name": "第一财经", "route": "/yicai/news", "category": "finance", "authority": 0.65},
+    {"name": "第一财经·头条", "route": "/yicai/headline", "category": "finance", "authority": 0.65},
+    {"name": "财联社·电报", "route": "/cls/telegraph", "category": "finance", "authority": 0.75},
+    {"name": "财联社·深度", "route": "/cls/depth", "category": "finance", "authority": 0.70},
+]
+
+
+def get_rsshub_sources(base_url: str) -> list:
+    """把 RSSHub 财经源路由展开成完整 feed 配置;base_url 为空则返回空列表(禁用)。"""
+    if not base_url:
+        return []
+    base = base_url.rstrip("/")
+    return [
+        {
+            "name": s["name"],
+            "url": base + s["route"],
+            "category": s["category"],
+            "authority": s["authority"],
+        }
+        for s in RSSHUB_FINANCE_SOURCES
+    ]
+
 # Authority weight for Hacker News items
 HN_AUTHORITY = 0.85
 
