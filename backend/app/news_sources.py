@@ -24,6 +24,12 @@ RSS_SOURCES = [
     {"name": "VentureBeat AI", "url": "https://venturebeat.com/category/ai/feed/", "category": "ai", "authority": 0.60},
     {"name": "arXiv cs.AI", "url": "https://rss.arxiv.org/rss/cs.AI", "category": "ai", "authority": 0.55},
     {"name": "OpenAI Blog", "url": "https://openai.com/blog/rss.xml", "category": "ai", "authority": 0.70},
+    # ── 中文 ──
+    {"name": "IT之家", "url": "https://www.ithome.com/rss/", "category": "tech", "authority": 0.60},
+    {"name": "少数派", "url": "https://sspai.com/feed", "category": "tech", "authority": 0.60},
+    {"name": "极客公园", "url": "https://www.geekpark.net/rss", "category": "tech", "authority": 0.55},
+    {"name": "爱范儿", "url": "https://www.ifanr.com/feed", "category": "tech", "authority": 0.55},
+    {"name": "量子位", "url": "https://www.qbitai.com/feed", "category": "ai", "authority": 0.60},
 ]
 
 # Authority weight for Hacker News items

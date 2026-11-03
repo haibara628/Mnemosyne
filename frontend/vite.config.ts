@@ -19,4 +19,14 @@ export default defineConfig({
       },
     },
   },
+  // `vite preview` 不读取 server.proxy,本地验证生产构建时需要同样的代理
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
