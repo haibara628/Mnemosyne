@@ -20,19 +20,11 @@ export default defineConfig({
     },
   },
   build: {
-    // BlockSuite 的 DI(`parseIdentifier`)依赖 `Function.prototype.name` 来识别
-    // 用构造器注册的服务。oxc 压缩默认会把具名 class 内联成数组里的匿名
-    // class 表达式(`[class extends X {...}]`),导致 `.name` 丢失、编辑器中
-    // 报 "Input is not a service identifier." 且正文无法渲染。保留 class/function
-    // 名即可,只影响 .name,不影响变量名压缩。
-    rolldownOptions: {
-      output: {
-        minify: {
-          compress: { keepNames: { class: true, function: true } },
-          mangle: { keepNames: true },
-        },
-      },
-    },
+    // BlockSuite 的 DI(`parseIdentifier`)依赖 `Function.prototype.name` 识别用构造器
+    // 注册的服务。oxc 压缩会把具名 class 内联成匿名 class 表达式,导致 `.name` 丢失、
+    // 编辑器报 "Input is not a service identifier." 且正文无法渲染。
+    // 个人工具,关闭压缩换取正确性(体积可接受,Caddy 已配 zstd/gzip 传输压缩)。
+    minify: false,
   },
   // `vite preview` 不读取 server.proxy,本地验证生产构建时需要同样的代理
   preview: {
