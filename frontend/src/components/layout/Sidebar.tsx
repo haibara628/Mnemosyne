@@ -7,6 +7,7 @@ import {
   GitBranch,
   CalendarDays,
   Sparkles,
+  ClipboardList,
   Newspaper,
   Share2,
   Search,
@@ -119,6 +120,7 @@ export default function Sidebar() {
         <NavItem to="/assets" icon={Images} label="素材库" active={isActive('/assets')} />
         <NavItem to="/lineage" icon={GitBranch} label="血缘" active={isActive('/lineage')} />
         <NavItem to="/tasks" icon={CalendarDays} label="日程" active={isActive('/tasks')} />
+        <NavItem to="/memo" icon={ClipboardList} label="备忘录" active={isActive('/memo')} />
         <NavItem to="/ai" icon={Sparkles} label="AI 面板" active={isActive('/ai')} />
 
         <div className="px-3 py-1 mt-4 text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">

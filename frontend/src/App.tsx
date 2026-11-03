@@ -13,6 +13,7 @@ import AssetsPage from './pages/AssetsPage';
 import LineagePage from './pages/LineagePage';
 import TasksPage from './pages/TasksPage';
 import AIPanelPage from './pages/AIPanelPage';
+import MemoPage from './pages/MemoPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/lineage" element={<LineagePage />} />
               <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/memo" element={<MemoPage />} />
               <Route path="/ai" element={<AIPanelPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/news" element={<NewsPage />} />
