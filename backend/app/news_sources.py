@@ -34,7 +34,8 @@ RSS_SOURCES = [
 
 # 中文财经源(雪球/财新/华尔街见闻/财联社/第一财经无公开 RSS),经 RSSHub 转换。
 # 只存路由路径;完整 URL = rsshub_base_url + route(见 get_rsshub_sources)。
-# 雪球/36氪 反爬返回 503,需 RSSHub 配 headless 浏览器,暂未加入。
+# 36氪快讯(/36kr/newsflashes)、雪球今日话题(/xueqiu/today)已接入;
+# 36氪新闻(/36kr/news)与雪球热帖(/xueqiu/hots)仍因上游反爬(36氪 anti-bot / 雪球接口 400)不可用,等 RSSHub 上游修复。
 RSSHUB_FINANCE_SOURCES = [
     {"name": "财新", "route": "/caixin/latest", "category": "finance", "authority": 0.85},
     {"name": "华尔街见闻·全球", "route": "/wallstreetcn/news/global", "category": "finance", "authority": 0.70},
@@ -44,6 +45,8 @@ RSSHUB_FINANCE_SOURCES = [
     {"name": "第一财经·头条", "route": "/yicai/headline", "category": "finance", "authority": 0.65},
     {"name": "财联社·电报", "route": "/cls/telegraph", "category": "finance", "authority": 0.75},
     {"name": "财联社·深度", "route": "/cls/depth", "category": "finance", "authority": 0.70},
+    {"name": "36氪·快讯", "route": "/36kr/newsflashes", "category": "finance", "authority": 0.60},
+    {"name": "雪球·今日话题", "route": "/xueqiu/today", "category": "finance", "authority": 0.55},
 ]
 
 
